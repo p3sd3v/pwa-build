@@ -52,15 +52,82 @@ validate_app_id() {
 change_android_package_id() {
     local new_id="$1"
     local gradle_file="$PROJECT_ROOT/android/app/build.gradle.kts"
+    local kotlin_base="$PROJECT_ROOT/android/app/src/main/kotlin"
+    local java_base="$PROJECT_ROOT/android/app/src/main/java"
     
     log_info "Alterando Package ID no Android..."
     
     if [[ -f "$gradle_file" ]]; then
+        # Obtém o package ID atual do build.gradle.kts
+        local old_id=$(grep -o 'applicationId = "[^"]*"' "$gradle_file" | sed 's/applicationId = "\(.*\)"/\1/')
+        
+        if [[ -z "$old_id" ]]; then
+            log_warning "Não foi possível detectar o applicationId atual"
+            old_id="com.example.pwa_build"
+        fi
+        
+        log_info "Package ID atual: $old_id"
+        
         # Altera o namespace
         sed -i '' "s/namespace = \"[^\"]*\"/namespace = \"$new_id\"/" "$gradle_file"
         # Altera o applicationId
         sed -i '' "s/applicationId = \"[^\"]*\"/applicationId = \"$new_id\"/" "$gradle_file"
         log_success "Android build.gradle.kts atualizado"
+        
+        # Converte package ID para path (com.example.app -> com/example/app)
+        local old_path="${old_id//./\/}"
+        local new_path="${new_id//./\/}"
+        
+        # Atualiza MainActivity.kt (Kotlin)
+        local kotlin_main_activity="$kotlin_base/$old_path/MainActivity.kt"
+        if [[ -f "$kotlin_main_activity" ]]; then
+            # Atualiza o package declaration no arquivo
+            sed -i '' "s/^package $old_id$/package $new_id/" "$kotlin_main_activity"
+            log_success "MainActivity.kt (Kotlin) - package declaration atualizado"
+            
+            # Cria nova estrutura de diretórios
+            mkdir -p "$kotlin_base/$new_path"
+            
+            # Move o arquivo para a nova estrutura
+            mv "$kotlin_main_activity" "$kotlin_base/$new_path/MainActivity.kt"
+            log_success "MainActivity.kt movido para $kotlin_base/$new_path/"
+            
+            # Remove diretórios vazios antigos
+            local old_dir="$kotlin_base/$old_path"
+            while [[ "$old_dir" != "$kotlin_base" ]]; do
+                if [[ -d "$old_dir" ]] && [[ -z "$(ls -A "$old_dir")" ]]; then
+                    rmdir "$old_dir"
+                fi
+                old_dir=$(dirname "$old_dir")
+            done
+            log_success "Diretórios antigos removidos"
+        else
+            log_warning "MainActivity.kt (Kotlin) não encontrado em $kotlin_main_activity"
+        fi
+        
+        # Atualiza MainActivity.java (Java) se existir
+        local java_main_activity="$java_base/$old_path/MainActivity.java"
+        if [[ -f "$java_main_activity" ]]; then
+            # Atualiza o package declaration no arquivo
+            sed -i '' "s/^package $old_id;$/package $new_id;/" "$java_main_activity"
+            log_success "MainActivity.java - package declaration atualizado"
+            
+            # Cria nova estrutura de diretórios
+            mkdir -p "$java_base/$new_path"
+            
+            # Move o arquivo para a nova estrutura
+            mv "$java_main_activity" "$java_base/$new_path/MainActivity.java"
+            log_success "MainActivity.java movido para $java_base/$new_path/"
+            
+            # Remove diretórios vazios antigos
+            local old_dir="$java_base/$old_path"
+            while [[ "$old_dir" != "$java_base" ]]; do
+                if [[ -d "$old_dir" ]] && [[ -z "$(ls -A "$old_dir")" ]]; then
+                    rmdir "$old_dir"
+                fi
+                old_dir=$(dirname "$old_dir")
+            done
+        fi
     else
         log_warning "Arquivo $gradle_file não encontrado"
     fi
@@ -216,5 +283,7 @@ show_current_ids
 log_warning "Lembre-se de:"
 echo "  1. Executar 'flutter clean' antes de compilar novamente"
 echo "  2. Para iOS/macOS, execute 'cd ios && pod install' (ou 'cd macos && pod install')"
-echo "  3. Atualizar configurações de Firebase, Google Services, etc., se aplicável"
+echo "  3. Atualizar o 'package_name' no google-services.json (Android Firebase)"
+echo "  4. Atualizar o 'BUNDLE_ID' no GoogleService-Info.plist (iOS Firebase)"
+echo "  5. Ou re-configurar o Firebase com: flutterfire configure"
 echo ""
