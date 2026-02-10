@@ -6,8 +6,7 @@ plugins {
 }
 
 android {
-    namespace = System.getenv("PACKAGENAME") ?: "com.pwa_build"
-    val appName = System.getenv("APPNAME") ?: "PWA Build"
+    namespace = "com.example.pwa_build"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -22,8 +21,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = namespace
-        resValue(type = "string", name = "app_name", value = appName)
+        applicationId = "com.example.pwa_build"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
