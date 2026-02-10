@@ -75,8 +75,8 @@ change_android_package_id() {
         log_success "Android build.gradle.kts atualizado"
         
         # Converte package ID para path (com.example.app -> com/example/app)
-        local old_path="${old_id//./\/}"
-        local new_path="${new_id//./\/}"
+        local old_path="${old_id//.//}"
+        local new_path="${new_id//.//}"
         
         # Atualiza MainActivity.kt (Kotlin)
         local kotlin_main_activity="$kotlin_base/$old_path/MainActivity.kt"
