@@ -4,11 +4,18 @@
     // Para obter mais informações, acesse: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "name": "pwa_build",
             "request": "launch",
-            "type": "dart"
+            "type": "dart",
+            "env": {
+                "PACKAGENAME": "com.example.pwa_build",
+                "APPNAME": "PWA Build",
+                "SCHEME_DYNAMIC_LINK": "pwabuild",
+                "HOST_DYNAMIC_LINK": "pwabuild",
+                "BRANCH_IO_KEY_LIVE": "key_live",
+                "BRANCH_IO_KEY_TEST": "key_test"
+            }
         },
         {
             "name": "pwa_build (profile mode)",
