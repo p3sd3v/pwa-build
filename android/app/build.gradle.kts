@@ -6,7 +6,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pwa_build"
+    namespace = System.getenv("PACKAGENAME") ?: "com.example.pwa_build"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
