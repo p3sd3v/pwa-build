@@ -115,14 +115,16 @@ change_macos_bundle_id() {
 # Função para exibir o uso do script
 show_usage() {
     echo ""
-    echo "Uso: $0 <novo_app_id>"
+    echo "Uso: $0 <novo_app_id> [plataforma]"
     echo ""
     echo "Argumentos:"
     echo "  novo_app_id    O novo identificador da aplicação (ex: com.minhaempresa.meuapp)"
+    echo "  plataforma     (Opcional) A plataforma a ser atualizada: android, ios, macos, all"
     echo ""
     echo "Exemplos:"
     echo "  $0 com.minhaempresa.meuaplicativo"
-    echo "  $0 br.com.empresa.app"
+    echo "  $0 br.com.empresa.app android"
+    echo "  $0 br.com.empresa.app all"
     echo ""
     echo "Este script altera:"
     echo "  - Android: namespace e applicationId em android/app/build.gradle.kts"
@@ -161,6 +163,28 @@ show_current_ids() {
     echo ""
 }
 
+# Função para selecionar a plataforma interativamente
+select_platform() {
+    echo "Selecione a plataforma para alterar o ID:"
+    echo "  1) Android"
+    echo "  2) iOS"
+    echo "  3) macOS"
+    echo "  4) Todas (All)"
+    echo ""
+    read -p "Opção [1-4] (padrão: 4): " platform_opt
+    
+    case $platform_opt in
+        1) PLATFORM="android" ;;
+        2) PLATFORM="ios" ;;
+        3) PLATFORM="macos" ;;
+        4|"") PLATFORM="all" ;;
+        *) 
+            log_error "Opção inválida!"
+            exit 1 
+            ;;
+    esac
+}
+
 # =============================================================================
 # MAIN
 # =============================================================================
@@ -179,11 +203,22 @@ if [[ -z "$1" ]]; then
 fi
 
 NEW_APP_ID="$1"
+PLATFORM="$2"
 
 # Validar formato do App ID
 validate_app_id "$NEW_APP_ID"
 
 log_info "Novo App ID: $NEW_APP_ID"
+
+# Se a plataforma não foi passada, perguntar
+if [[ -z "$PLATFORM" ]]; then
+    select_platform
+fi
+
+# Normalizar plataforma para lowercase
+PLATFORM=$(echo "$PLATFORM" | tr '[:upper:]' '[:lower:]')
+
+log_info "Plataforma selecionada: $PLATFORM"
 echo ""
 
 # Mostrar IDs atuais
@@ -200,10 +235,28 @@ fi
 
 echo ""
 
-# Executar alterações
-change_android_package_id "$NEW_APP_ID"
-change_ios_bundle_id "$NEW_APP_ID"
-change_macos_bundle_id "$NEW_APP_ID"
+# Executar alterações conforme a plataforma
+case "$PLATFORM" in
+    android)
+        change_android_package_id "$NEW_APP_ID"
+        ;;
+    ios)
+        change_ios_bundle_id "$NEW_APP_ID"
+        ;;
+    mac|macos)
+        change_macos_bundle_id "$NEW_APP_ID"
+        ;;
+    all|tudos|todos)
+        change_android_package_id "$NEW_APP_ID"
+        change_ios_bundle_id "$NEW_APP_ID"
+        change_macos_bundle_id "$NEW_APP_ID"
+        ;;
+    *)
+        log_error "Plataforma desconhecida: $PLATFORM"
+        show_usage
+        exit 1
+        ;;
+esac
 
 echo ""
 log_success "Alteração concluída!"
