@@ -44,12 +44,12 @@ android {
         create("dev") {
             dimension = "default"
             applicationIdSuffix = ".dev" // O pacote será com.exemplo.app.dev
-            resValue(type="string", name="app_name", value=System.getenv("APPNAME"))
+            resValue(type="string", name="app_name", value=System.getenv("APPNAME")?: "App Dev")
         }
         create("prod") {
-            applicationIdSuffix = System.getenv("FLAVOR")
+            applicationIdSuffix = System.getenv("FLAVOR")?: "prod"
             // Mantém o applicationId original (com.exemplo.app)
-            resValue(type="string", name="app_name", value=System.getenv("APPNAME"))
+            resValue(type="string", name="app_name", value=System.getenv("APPNAME")?: "App Oficial")
         }
     }
 }
