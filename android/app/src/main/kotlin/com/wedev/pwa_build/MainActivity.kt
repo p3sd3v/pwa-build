@@ -1,4 +1,4 @@
-package com.example.pwa_build
+package com.wedev.pwa_build
 
 import io.flutter.embedding.android.FlutterActivity
 
