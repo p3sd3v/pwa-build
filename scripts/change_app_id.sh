@@ -3,8 +3,16 @@
 # =============================================================================
 # Script para alterar o Package ID (Android) e Bundle ID (iOS/macOS)
 # =============================================================================
-# Uso: ./change_app_id.sh <novo_app_id>
-# Exemplo: ./change_app_id.sh com.minhaempresa.meuapp
+# Uso: ./change_app_id.sh <novo_app_id> [plataforma]
+#
+# Argumentos:
+#   novo_app_id (Obrigatório): O novo ID do app (ex: com.empresa.app)
+#   plataforma  (Opcional): android, ios, macos, all
+#
+# Exemplos:
+#   ./scripts/change_app_id.sh com.minhaempresa.meuapp        # Prompt interativo
+#   ./scripts/change_app_id.sh br.com.empresa.app android     # Apenas Android
+#   ./scripts/change_app_id.sh br.com.empresa.app all         # Todas as plataformas
 # =============================================================================
 
 set -e
