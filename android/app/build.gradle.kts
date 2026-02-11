@@ -38,18 +38,18 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
-    flavorDimensions "default"
+    flavorDimensions("default")
 
     productFlavors {
-        dev {
-            dimension "default"
-            applicationIdSuffix ".dev" // O pacote será com.exemplo.app.dev
-            resValue "string", "app_name", "App Dev"
+        create("dev") {
+            dimension = "default"
+            applicationIdSuffix = ".dev" // O pacote será com.exemplo.app.dev
+            resValue(type="string", name="app_name", value=System.getenv("APPNAME"))
         }
-        prod {
-            applicationIdSuffix System.getenv("FLAVOR")
+        create("prod") {
+            applicationIdSuffix = System.getenv("FLAVOR")
             // Mantém o applicationId original (com.exemplo.app)
-            resValue "string", "app_name", "App Oficial"
+            resValue(type="string", name="app_name", value=System.getenv("APPNAME"))
         }
     }
 }
