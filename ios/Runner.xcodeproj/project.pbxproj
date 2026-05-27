@@ -198,6 +198,7 @@
 				97C146EC1CF9000F007C117D /* Resources */,
 				9705A1C41CF9048500538489 /* Embed Frameworks */,
 				3B06AD1E1E4923F5004D2608 /* Thin Binary */,
+				A1B2C3D4E5F60718293A4B5D /* Fix App.framework MinimumOSVersion */,
 				FDA7C5A7F378247131582383 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
@@ -307,6 +308,21 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "/bin/sh \"$FLUTTER_ROOT/packages/flutter_tools/bin/xcode_backend.sh\" embed_and_thin";
+		};
+		A1B2C3D4E5F60718293A4B5D /* Fix App.framework MinimumOSVersion */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Fix App.framework MinimumOSVersion";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "APP_FRAMEWORK_PLIST=\"${BUILT_PRODUCTS_DIR}/${FRAMEWORKS_FOLDER_PATH}/App.framework/Info.plist\"\n\nif [ -f \"$APP_FRAMEWORK_PLIST\" ]; then\n  CURRENT=$(/usr/libexec/PlistBuddy -c \"Print :MinimumOSVersion\" \"$APP_FRAMEWORK_PLIST\" 2>/dev/null || echo \"\")\n  if [ -z \"$CURRENT\" ]; then\n    if /usr/libexec/PlistBuddy -c \"Set :MinimumOSVersion ${IPHONEOS_DEPLOYMENT_TARGET}\" \"$APP_FRAMEWORK_PLIST\" 2>/dev/null; then\n      echo \"MinimumOSVersion set to ${IPHONEOS_DEPLOYMENT_TARGET} in App.framework\"\n    else\n      /usr/libexec/PlistBuddy -c \"Add :MinimumOSVersion string ${IPHONEOS_DEPLOYMENT_TARGET}\" \"$APP_FRAMEWORK_PLIST\"\n      echo \"MinimumOSVersion added as ${IPHONEOS_DEPLOYMENT_TARGET} in App.framework\"\n    fi\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
 		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
