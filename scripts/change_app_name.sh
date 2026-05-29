@@ -100,7 +100,7 @@ show_current_names() {
         local android_label=$(grep -o 'android:label="[^"]*"' "$ANDROID_MANIFEST" | head -1 | sed 's/android:label="\([^"]*\)"/\1/')
         local android_env_name="N/A"
         if [[ -f "$ENV_PROD_FILE" ]]; then
-            android_env_name=$(grep "^APPNAME=" "$ENV_PROD_FILE" 2>/dev/null | head -1 | sed "s/^APPNAME='\\?\([^']*\\)'\\?/\1/" || echo "N/A")
+            android_env_name=$(grep "^APPNAME=" "$ENV_PROD_FILE" 2>/dev/null | head -1 | sed "s/^APPNAME=//; s/^'//; s/'$//")
         fi
         echo -e "  ${BLUE}Android (label):${NC} $android_label"
         echo -e "  ${BLUE}Android (APPNAME):${NC} $android_env_name"
@@ -249,8 +249,7 @@ show_current_names
 
 log_warning "Lembre-se de:"
 echo "  1. Executar 'flutter clean' antes de compilar novamente"
-echo "  2. Para Android, exporte APPNAME antes do build:"
-echo "     export APPNAME=\"$NEW_APP_NAME\""
-echo "  3. Para iOS, execute 'cd ios && pod install' (se necessário)"
+echo "  2. O nome fica salvo em envs/.env.prod e ios/Flutter/AppName.xcconfig"
+echo "  3. No Codemagic, defina APPNAME ou rode este script no pre-build"
 echo "  4. Desinstale o app antigo do dispositivo antes de reinstalar"
 echo ""

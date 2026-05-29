@@ -1,2 +1,2 @@
 // Nome exibido na home screen do iOS — alterado via scripts/change_app_name.sh
-APP_DISPLAY_NAME = Pwa Build
+APP_DISPLAY_NAME = "Conta da Saúde"
