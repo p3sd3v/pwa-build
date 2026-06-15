@@ -89,8 +89,20 @@ class _MyHomePageState extends State<MyHomePage> {
             initialUrlRequest: URLRequest(
               url: WebUri(dotenv.env['HOST_URL']!),
             ),
+            initialSettings: InAppWebViewSettings(
+              allowsInlineMediaPlayback: true,
+              mediaPlaybackRequiresUserGesture: false,
+              iframeAllow: "camera; microphone",
+              iframeAllowFullscreen: true,
+            ),
             onWebViewCreated: (controller) {
               _webViewController = controller;
+            },
+            onPermissionRequest: (controller, request) async {
+              return PermissionResponse(
+                resources: request.resources,
+                action: PermissionResponseAction.GRANT,
+              );
             },
           ),
         ),

@@ -26,6 +26,14 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>NSCameraUsageDescription</key>
+	<string>Este aplicativo precisa acessar a câmera para capturar fotos e vídeos.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Este aplicativo precisa acessar o microfone para gravar áudio.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Este aplicativo precisa acessar suas fotos para enviar arquivos.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>Este aplicativo precisa salvar fotos e vídeos na sua galeria.</string>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
