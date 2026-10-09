@@ -1,11 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
+const _pageBackground = Color(0xFF070D18);
+
 Future<void> main() async {
-   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: "envs/.env.prod");
-  
+
+  SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  SystemChrome.setSystemUIOverlayStyle(
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarDividerColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      statusBarBrightness: Brightness.dark,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
+
   runApp(const MyApp());
 }
 
@@ -18,22 +33,11 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        scaffoldBackgroundColor: _pageBackground,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.deepPurple,
+          brightness: Brightness.dark,
+        ),
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -84,27 +88,29 @@ class _MyHomePageState extends State<MyHomePage> {
         }
       },
       child: Scaffold(
-        body: SafeArea(
-          child: InAppWebView(
-            initialUrlRequest: URLRequest(
-              url: WebUri(dotenv.env['HOST_URL']!),
-            ),
-            initialSettings: InAppWebViewSettings(
-              allowsInlineMediaPlayback: true,
-              mediaPlaybackRequiresUserGesture: false,
-              iframeAllow: "camera; microphone",
-              iframeAllowFullscreen: true,
-            ),
-            onWebViewCreated: (controller) {
-              _webViewController = controller;
-            },
-            onPermissionRequest: (controller, request) async {
-              return PermissionResponse(
-                resources: request.resources,
-                action: PermissionResponseAction.GRANT,
-              );
-            },
+        backgroundColor: _pageBackground,
+        body: InAppWebView(
+          initialUrlRequest: URLRequest(
+            url: WebUri(dotenv.env['HOST_URL']!),
           ),
+          initialSettings: InAppWebViewSettings(
+            allowsInlineMediaPlayback: true,
+            mediaPlaybackRequiresUserGesture: false,
+            iframeAllow: "camera; microphone",
+            iframeAllowFullscreen: true,
+            underPageBackgroundColor: _pageBackground,
+            contentInsetAdjustmentBehavior:
+                ScrollViewContentInsetAdjustmentBehavior.NEVER,
+          ),
+          onWebViewCreated: (controller) {
+            _webViewController = controller;
+          },
+          onPermissionRequest: (controller, request) async {
+            return PermissionResponse(
+              resources: request.resources,
+              action: PermissionResponseAction.GRANT,
+            );
+          },
         ),
       ),
     );
